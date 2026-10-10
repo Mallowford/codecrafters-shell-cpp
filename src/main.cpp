@@ -19,6 +19,12 @@ int main() {
     if (!is_command(command)) {
       std::cout << command << ": command not found\n";
     };
+
+    if (command.substr(0, 4) == "echo") {
+      std::cout << command.substr(5, command.size() - 5) << "\n";
+    };
+
+
   } while (command != "exit");
 };
 
