@@ -1,13 +1,16 @@
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 bool is_command(const std::string& command);
+std::unordered_set<std::string> command_list({"exit"});
 
 int main() {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   std::string command;
+
 
   do {
     std::cout << "$ ";
@@ -21,9 +24,5 @@ int main() {
 
 
 bool is_command(const std::string& command) {
-  if (command == "exit") {
-    return true;
-  };
-
-  return false;
+  return command_list.count(command);
 };
