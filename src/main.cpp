@@ -1,23 +1,30 @@
+// Libraries
 #include <iostream>
 #include <string>
 #include <unordered_set>
 #include <filesystem>
 #include <vector>
 
+// DEFINES
 #define DEBUG false
-
 #ifdef _WIN32
-constexpr char PATH_LIST_SEPARATOR = ';';
+  constexpr char PATH_LIST_SEPARATOR = ';';
 #else
-constexpr char PATH_LIST_SEPARATOR = ':';
+  constexpr char PATH_LIST_SEPARATOR = ':';
 #endif
 
+// Alias
+namespace fs = std::filesystem;
+
+// Global
 std::unordered_set<std::string> command_list({"exit", "echo", "type"});
 
+// Function Stub
+bool is_executable(fs::perms p);
 bool is_command(const std::string& command);
 std::string find_command(const std::string& command_name);
 
-namespace fs = std::filesystem;
+// Main
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -106,13 +113,8 @@ std::string find_command(const std::string& command_name) {
         // Check permissions of file if it can execute
         bool has_perms = false;
         fs::perms p = fs::status(file).permissions();
-        bool owner = ((p & fs::perms::owner_exec) != fs::perms::none);
-        bool group = ((p & fs::perms::group_exec) != fs::perms::none);
-        bool others = ((p & fs::perms::others_exec) != fs::perms::none);
 
-        if (!(owner || group || others)) {
-          continue;
-        };
+        if (is_executable(p));
 
         return file.path().string();
       };
@@ -120,4 +122,11 @@ std::string find_command(const std::string& command_name) {
   };
 
   return "";
+};
+bool is_executable(fs::perms p) {
+  bool owner = ((p & fs::perms::owner_exec) != fs::perms::none);
+  bool group = ((p & fs::perms::group_exec) != fs::perms::none);
+  bool others = ((p & fs::perms::others_exec) != fs::perms::none);
+
+  return (owner || group || others);
 };
