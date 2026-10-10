@@ -26,6 +26,8 @@ int main() {
       };
     };
 
+    std::cin.ignore();
+    std::cin.clear();
 
   } while (command != "exit");
 };
