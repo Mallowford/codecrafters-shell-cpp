@@ -5,7 +5,7 @@
 #define DEBUG false
 
 bool is_command(const std::string& command);
-std::unordered_set<std::string> command_list({"exit", "echo"});
+std::unordered_set<std::string> command_list({"exit", "echo", "type"});
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -35,8 +35,19 @@ int main() {
       goto GONEXT;
     };
 
-    if (command.substr(0, 4) == "echo") {
+    if (command == "echo") {
       std::cout << parameters << std::endl;
+    };
+    if (command == "type") {
+      if (parameters == "echo" || parameters == "exit" || parameters == "type") {
+        std::cout << parameters << " is a shell builtin\n";
+      }
+      else if(is_command(parameters)) {
+        std::cout << "Not specified\n";
+      }
+      else {
+        std::cout << parameters << ": not found\n";
+      };
     };
 
     GONEXT:
