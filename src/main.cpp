@@ -13,8 +13,17 @@ int main() {
     std::cout << "$ ";
     std::cin >> command;
 
-    if (command.size()) {
+    if (!is_command(command)) {
       std::cout << command << ": command not found\n";
     };
   } while (command != "exit");
+};
+
+
+bool is_command(const std::string& command) {
+  if (command == "exit") {
+    return true;
+  };
+
+  return false;
 };
