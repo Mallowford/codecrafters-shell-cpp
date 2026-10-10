@@ -21,7 +21,9 @@ int main() {
     };
 
     if (command.substr(0, 4) == "echo") {
-      std::cout << command.substr(5, command.size() - 5) << "\n";
+      if (command.size() > 4) {
+        std::cout << command.substr(5, command.size() - 5) << "\n";
+      };
     };
 
 
