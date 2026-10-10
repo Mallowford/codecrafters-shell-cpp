@@ -4,13 +4,16 @@
 #include <unordered_set>
 #include <filesystem>
 #include <vector>
+// #include <cstdlib>
 
 // DEFINES
 #define DEBUG false
 #ifdef _WIN32
   constexpr char PATH_LIST_SEPARATOR = ';';
+  constexpr char PATH_DIRECTORY_KEYWORD = '\\';
 #else
   constexpr char PATH_LIST_SEPARATOR = ':';
+  constexpr char PATH_DIRECTORY_KEYWORD = '/';
 #endif
 
 // Alias
@@ -21,7 +24,7 @@ std::unordered_set<std::string> command_list({"exit", "echo", "type"});
 
 // Function Stub
 bool is_executable(fs::perms p);
-bool is_command(const std::string& command);
+bool isBuiltIn(const std::string& command);
 std::string find_command(const std::string& command_name);
 
 // Main
@@ -36,11 +39,9 @@ int main() {
   do {
     std::cout << "$ ";
     std::getline(std::cin, command);
-    for (int i = 0; i < command.size(); i++) {
-      if (command.find(' ') != std::string::npos) {
-        parameters = command.substr(command.find(' ') + 1);
-        command = command.substr(0, command.find(' '));
-      };
+    if (command.find(' ') != std::string::npos) {
+      parameters = command.substr(command.find(' ') + 1);
+      command = command.substr(0, command.find(' '));
     };
 
     if (DEBUG) {
@@ -49,9 +50,28 @@ int main() {
     };
 
 
-    if (!is_command(command)) {
-      std::cout << command << ": command not found\n";
-      goto GONEXT;
+    if (!isBuiltIn(command)) {
+      std::string custom_command = find_command(command);
+      if (custom_command.size() > 0) {
+
+        std::vector<std::string> args;
+        int i = 0;
+        while (i < parameters.size()) {
+          int j = i;
+          while (parameters.at(j) != ' ' && j != parameters.size() - 1) {
+            j++;
+          };
+
+          args.emplace_back(parameters.substr(i, j - i));
+          i = j + 1;
+        };
+        command.append(" " + parameters);
+        // std::cout << custom_command << "\n";
+        std::system(command.c_str());
+      }
+      else {
+        std::cout << command << ": command not found\n";
+      };
     };
 
     if (command == "echo") {
@@ -81,12 +101,13 @@ int main() {
 };
 
 
-bool is_command(const std::string& command) {
+bool isBuiltIn(const std::string& command) {
   return command_list.count(command);
 };
 std::string find_command(const std::string& command_name) {
   std::string PATH = std::getenv("PATH");
   std::vector<fs::path> paths;
+
   int i = 0;
   while (i < PATH.size()) {
     int j = i;
@@ -114,7 +135,9 @@ std::string find_command(const std::string& command_name) {
         bool has_perms = false;
         fs::perms p = fs::status(file).permissions();
 
-        if (is_executable(p));
+        if (!is_executable(p)) {
+          continue;
+        };
 
         return file.path().string();
       };
