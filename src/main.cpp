@@ -2,6 +2,8 @@
 #include <string>
 #include <unordered_set>
 
+#define DEBUG false
+
 bool is_command(const std::string& command);
 std::unordered_set<std::string> command_list({"exit", "echo"});
 
@@ -10,23 +12,32 @@ int main() {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   std::string command;
-
+  std::string parameters;
 
   do {
     std::cout << "$ ";
-    std::cin >> command;
+    std::getline(std::cin, command);
+    for (int i = 0; i < command.size(); i++) {
+      if (command.find(' ') != std::string::npos) {
+        parameters = command.substr(command.find(' ') + 1);
+        command = command.substr(0, command.find(' '));
+      };
+    };
+
+    if (DEBUG) {
+      std::cout << "TEST_COMMAND: " << command << "\n";
+      std::cout << "TEST_PARAMETERS: " << parameters << "\n";
+    };
+
 
     if (!is_command(command)) {
       std::cout << command << ": command not found\n";
     };
 
     if (command.substr(0, 4) == "echo") {
-      if (command.size() > 4) {
-        std::cout << command.substr(5, command.size() - 5) << "\n";
-      };
+      std::cout << parameters << std::endl;
     };
 
-    std::cin.ignore();
     std::cin.clear();
 
   } while (command != "exit");
