@@ -53,20 +53,7 @@ int main() {
     if (!isBuiltIn(command)) {
       std::string custom_command = find_command(command);
       if (custom_command.size() > 0) {
-
-        std::vector<std::string> args;
-        int i = 0;
-        while (i < parameters.size()) {
-          int j = i;
-          while (parameters.at(j) != ' ' && j != parameters.size() - 1) {
-            j++;
-          };
-
-          args.emplace_back(parameters.substr(i, j - i));
-          i = j + 1;
-        };
         command.append(" " + parameters);
-        // std::cout << custom_command << "\n";
         std::system(command.c_str());
       }
       else {
