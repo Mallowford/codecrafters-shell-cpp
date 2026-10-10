@@ -32,11 +32,14 @@ int main() {
 
     if (!is_command(command)) {
       std::cout << command << ": command not found\n";
+      goto GONEXT;
     };
 
     if (command.substr(0, 4) == "echo") {
       std::cout << parameters << std::endl;
     };
+
+    GONEXT:
 
     std::cin.clear();
 
