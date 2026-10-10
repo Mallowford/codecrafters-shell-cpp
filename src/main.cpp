@@ -3,7 +3,7 @@
 #include <unordered_set>
 
 bool is_command(const std::string& command);
-std::unordered_set<std::string> command_list({"exit"});
+std::unordered_set<std::string> command_list({"exit", "echo"});
 
 int main() {
   // Flush after every std::cout / std:cerr
