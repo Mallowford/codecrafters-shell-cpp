@@ -82,15 +82,40 @@ int main() {
       std::cout << pathAsString << "\n";
     };
     if (command == "cd") {
-      fs::path PATH(parameters);
+      fs::path PATH = CURRENT_PATH;
+      // Check if parent directory
+      do {
+        if (parameters.find("../") != std::string::npos) {
+          PATH = PATH.parent_path();
+          parameters = parameters.substr(parameters.find("../") + 3);
+        };
+      } while (parameters.find("../") != std::string::npos && parameters.size() != 0);
+
+      // Check if current directory (can only be ./ or something within)
+      do {
+        if (parameters.find("./") != std::string::npos) {
+          parameters = parameters.substr(parameters.find("./") + 2);
+        };
+      } while (parameters.find("./") != std::string::npos && parameters.size() != 0);
+
+
+      PATH = PATH / parameters;
+
+      // Absolute/Specific Path
       if (!fs::exists(PATH)) {
         std::cout << command << ": " << parameters << ": No such file or directory\n";
         goto GONEXT;
       };
+      
+      std::string cleanup = PATH;
+      char lastCharacter = cleanup.at(cleanup.size() - 1);
+      while (lastCharacter == '.' || lastCharacter == '/' || lastCharacter == '\\') {
+        cleanup.erase(cleanup.size() - 1);
+        lastCharacter = cleanup.at(cleanup.size() - 1);
+      };
 
-      CURRENT_PATH = PATH;
-
-
+      // END RESULT
+      CURRENT_PATH = cleanup;
     };
 
     GONEXT:
