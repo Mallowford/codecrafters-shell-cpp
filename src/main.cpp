@@ -77,7 +77,8 @@ int main() {
       };
     };
     if (command == "pwd") {
-      std::cout << std::filesystem::current_path() << "\n";
+      std::string keyword = fs::current_path();
+      std::cout << keyword << "\n";
     };
 
     GONEXT:
