@@ -63,7 +63,7 @@ int main() {
     };
     if (command == "type") {
       // Built-Ins
-      if (parameters == "echo" || parameters == "exit" || parameters == "type") {
+      if (isBuiltIn(parameters)) {
         std::cout << parameters << " is a shell builtin\n";
         goto GONEXT;
       };
