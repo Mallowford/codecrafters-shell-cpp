@@ -20,7 +20,8 @@
 namespace fs = std::filesystem;
 
 // Global
-std::unordered_set<std::string> command_list({"exit", "echo", "type", "pwd"});
+std::unordered_set<std::string> command_list({"exit", "echo", "type", "pwd", "cd"});
+fs::path CURRENT_PATH(fs::current_path());
 
 // Function Stub
 bool is_executable(fs::perms p);
@@ -77,8 +78,18 @@ int main() {
       };
     };
     if (command == "pwd") {
-      std::string keyword = fs::current_path();
-      std::cout << keyword << "\n";
+      std::cout << CURRENT_PATH << "\n";
+    };
+    if (command == "cd") {
+      fs::path PATH(parameters);
+      if (!fs::exists(PATH)) {
+        std::cout << command << ": " << parameters << ": No such file or directory\n";
+        goto GONEXT;
+      };
+
+      CURRENT_PATH = PATH;
+
+
     };
 
     GONEXT:
