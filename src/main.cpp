@@ -7,7 +7,6 @@
 // #include <cstdlib>
 
 // DEFINES
-#define DEBUG false
 #ifdef _WIN32
   constexpr char PATH_LIST_SEPARATOR = ';';
   constexpr char PATH_DIRECTORY_KEYWORD = '\\';
@@ -15,12 +14,13 @@
   constexpr char PATH_LIST_SEPARATOR = ':';
   constexpr char PATH_DIRECTORY_KEYWORD = '/';
 #endif
+#define SHELL_CHARACTER "$";
 
 // Alias
 namespace fs = std::filesystem;
 
 // Global
-std::unordered_set<std::string> command_list({"exit", "echo", "type"});
+std::unordered_set<std::string> command_list({"exit", "echo", "type", "pwd"});
 
 // Function Stub
 bool is_executable(fs::perms p);
@@ -36,19 +36,16 @@ int main() {
   std::string command;
   std::string parameters;
 
+
   do {
-    std::cout << "$ ";
+    std::cout << SHELL_CHARACTER;
+    std::cout << " ";
     std::getline(std::cin, command);
+    
     if (command.find(' ') != std::string::npos) {
       parameters = command.substr(command.find(' ') + 1);
       command = command.substr(0, command.find(' '));
     };
-
-    if (DEBUG) {
-      std::cout << "TEST_COMMAND: " << command << "\n";
-      std::cout << "TEST_PARAMETERS: " << parameters << "\n";
-    };
-
 
     if (!isBuiltIn(command)) {
       std::string custom_command = find_command(command);
@@ -78,6 +75,9 @@ int main() {
       else {
         std::cout << parameters << ": not found\n";
       };
+    };
+    if (command == "pwd") {
+      std::cout << std::filesystem::current_path() << "\n";
     };
 
     GONEXT:
