@@ -78,7 +78,8 @@ int main() {
       };
     };
     if (command == "pwd") {
-      std::cout << CURRENT_PATH << "\n";
+      std::string pathAsString = CURRENT_PATH; 
+      std::cout << pathAsString << "\n";
     };
     if (command == "cd") {
       fs::path PATH(parameters);
