@@ -81,41 +81,78 @@ int main() {
       std::string pathAsString = CURRENT_PATH; 
       std::cout << pathAsString << "\n";
     };
+
     if (command == "cd") {
-      fs::path PATH = CURRENT_PATH;
-      // Check if parent directory
+      fs::path PATH = parameters;
+      
+      if (fs::exists(PATH) && (parameters.find("..") == std::string::npos && parameters.find("./") && std::string::npos && parameters.find("~") == std::string::npos)) {
+        CURRENT_PATH = PATH;
+        goto GONEXT;
+      };
+
+      PATH = CURRENT_PATH;
+      std::string res;
+      std::string cleanedParameters = parameters;
+
       do {
-        if (parameters.find("../") != std::string::npos) {
-          PATH = PATH.parent_path();
-          parameters = parameters.substr(parameters.find("../") + 3);
+        char keyword = cleanedParameters.at(0);
+        if (keyword == '~') {
+          std::string conversion = std::getenv("HOME");
+          PATH = conversion;
+          cleanedParameters = cleanedParameters.substr(1);
+        }
+        else if (keyword == '.') {
+          // Parent Directory
+          if (cleanedParameters.substr(0, 3) == "../" || cleanedParameters.substr(0, 2) == "..") {
+            fs::path HOME = std::getenv("HOME");
+            if (PATH != HOME.parent_path()) {              
+              PATH = PATH.parent_path();
+            };
+
+            if (cleanedParameters.substr(0, 3) == "../") {
+              cleanedParameters = cleanedParameters.substr(3);
+            }
+            else {
+              cleanedParameters = cleanedParameters.substr(2);
+            };
+          }
+          // Check if current directory (can only be ./ or something within)
+          else if (cleanedParameters.substr(0, 2) == "./") {
+            cleanedParameters = cleanedParameters.substr(2);
+          };
+        }
+        else if (keyword == PATH_DIRECTORY_KEYWORD) {
+          cleanedParameters = cleanedParameters.substr(1);
+          fs::path tempCheck = CURRENT_PATH / cleanedParameters;
+          if (fs::exists(tempCheck)) {
+            CURRENT_PATH = tempCheck;
+            goto GONEXT;
+          };
+        }
+        else {
+          if (cleanedParameters.find(PATH_DIRECTORY_KEYWORD) != std::string::npos) {
+            PATH = PATH / cleanedParameters.substr(0, cleanedParameters.find(PATH_DIRECTORY_KEYWORD));
+            cleanedParameters = cleanedParameters.substr(cleanedParameters.find(PATH_DIRECTORY_KEYWORD) + 1);
+          }
+          else {
+            PATH = PATH / cleanedParameters;
+            cleanedParameters = "";
+          };
         };
-      } while (parameters.find("../") != std::string::npos && parameters.size() != 0);
+      } while (cleanedParameters.size() != 0);
 
-      // Check if current directory (can only be ./ or something within)
-      do {
-        if (parameters.find("./") != std::string::npos) {
-          parameters = parameters.substr(parameters.find("./") + 2);
-        };
-      } while (parameters.find("./") != std::string::npos && parameters.size() != 0);
-
-
-      PATH = PATH / parameters;
-
-      // Absolute/Specific Path
       if (!fs::exists(PATH)) {
         std::cout << command << ": " << parameters << ": No such file or directory\n";
         goto GONEXT;
       };
-      
-      std::string cleanup = PATH;
-      char lastCharacter = cleanup.at(cleanup.size() - 1);
-      while (lastCharacter == '.' || lastCharacter == '/' || lastCharacter == '\\') {
-        cleanup.erase(cleanup.size() - 1);
-        lastCharacter = cleanup.at(cleanup.size() - 1);
-      };
 
-      // END RESULT
-      CURRENT_PATH = cleanup;
+      res = PATH;
+      char lastCharacter = res.at(res.size() - 1);
+      while (lastCharacter == '.' || lastCharacter == '/' || lastCharacter == '\\') {
+        res.erase(res.size() - 1);
+        lastCharacter = res.at(res.size() - 1);
+      };
+      CURRENT_PATH = res;
     };
 
     GONEXT:
