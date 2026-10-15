@@ -93,6 +93,12 @@ int main() {
         else if (parameters.at(i) == ' ') {
           continue;
         }
+        else if (parameters.at(i) == '\\') {
+          if (i + 1 < parameters.size()) {
+            brokenParams.emplace_back(parameters.at(i + 1));
+          };
+          i++;
+        }
         else {
           int j = i;
           while (j < parameters.size() && parameters.at(j) != ' ' && parameters.at(j) != '\'' && parameters.at(j) != '"') {
