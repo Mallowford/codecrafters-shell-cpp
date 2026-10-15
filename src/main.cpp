@@ -95,7 +95,7 @@ int main() {
         }
         else {
           int j = i;
-          while (j < parameters.size() && parameters.at(j) != ' ' && parameters.at(j) != '\'' ) {
+          while (j < parameters.size() && parameters.at(j) != ' ' && parameters.at(j) != '\'' && parameters.at(j) != '"') {
             j++;
           };
 
