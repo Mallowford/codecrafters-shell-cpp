@@ -113,6 +113,9 @@ int main() {
           };
           brokenParams.emplace_back(tempadder);
           i = j;
+          if (i < parameters.size() && parameters.at(i) == '\\') {
+            i--;
+          };
         };
       };
 
