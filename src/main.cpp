@@ -60,7 +60,46 @@ int main() {
     };
 
     if (command == "echo") {
-      std::cout << parameters << std::endl;
+      // Break Parameters
+      std::vector<std::string> brokenParams;
+
+      for (int i = 0; i < parameters.size(); i++) {
+        if (parameters.at(i) == '\'') {
+          int j = i + 1;
+          while (j < parameters.size() && parameters.at(j) != '\'') {
+            j++;
+          };
+          i++;
+          std::string tempadder = parameters.substr(i, j - i);
+          if ((j + 1) < parameters.size() && parameters.at(j + 1) == ' ') {
+            tempadder.push_back(' ');
+          };
+          brokenParams.emplace_back(tempadder);
+          i = j;
+        }
+        else if (parameters.at(i) == ' ') {
+          continue;
+        }
+        else {
+          int j = i;
+          while (j < parameters.size() && parameters.at(j) != ' ' && parameters.at(j) != '\'' ) {
+            j++;
+          };
+
+          std::string tempadder = parameters.substr(i, j - i);
+          if (j < parameters.size() && parameters.at(j) == ' ') {
+            tempadder.push_back(' ');
+          };
+          brokenParams.emplace_back(tempadder);
+          i = j;
+        };
+      };
+
+      for (int i = 0; i < brokenParams.size(); i++) {
+        std::cout << brokenParams.at(i);
+      };
+
+      std::cout << std::endl;
     };
     if (command == "type") {
       // Built-Ins
