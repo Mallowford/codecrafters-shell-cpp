@@ -77,6 +77,19 @@ int main() {
           brokenParams.emplace_back(tempadder);
           i = j;
         }
+        else if (parameters.at(i) == '"') {
+          int j = i + 1;
+          while (j < parameters.size() && parameters.at(j) != '"') {
+            j++;
+          };
+          i++;
+          std::string tempadder = parameters.substr(i, j - i);
+          if ((j + 1) < parameters.size() && parameters.at(j + 1) == ' ') {
+            tempadder.push_back(' ');
+          };
+          brokenParams.emplace_back(tempadder);
+          i = j;
+        }
         else if (parameters.at(i) == ' ') {
           continue;
         }
