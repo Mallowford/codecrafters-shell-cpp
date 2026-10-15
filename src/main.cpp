@@ -95,7 +95,9 @@ int main() {
         }
         else if (parameters.at(i) == '\\') {
           if (i + 1 < parameters.size()) {
-            brokenParams.emplace_back(parameters.at(i + 1));
+            std::string tempadder = "";
+            tempadder.push_back(parameters.at(i + 1));
+            brokenParams.emplace_back(tempadder);
           };
           i++;
         }
